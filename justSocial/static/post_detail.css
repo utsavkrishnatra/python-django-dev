@@ -1,0 +1,10 @@
+.overflow-control {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+
+.edit-color{
+
+    color:#333
+}

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block headContent %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock headContent %}
+
+{% block content %}
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-md-3 col-sm-6">
+                <a href="{% url 'post_list' %}" class='btn btn-light'>Back to Feed</a>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mt-5">
+            <div class="card shadow-sm col-md-8 col-sm-12 border-bottom px-5 pt-3">
+                {% if profile.picture %}
+                    <img src="{{ profile.picture.url }}" alt="{{ profile.name }} profile picture" class="img-fluid rounded-circle mx-auto d-block" style="max-width: 150px;">
+                    <a class="btn btn-primary" href="{% url 'edit_profile' profile.user.pk %}" role="button">Edit <i class='far fa-edit'></i></a>
+                {% endif %}
+
+                {% if profile.name %}
+                    <h3 class='py-4'>{{ profile.name }}</h3>
+                {% else %}
+                    <h3 class='py-4'>{{ profile.user.username }}</h3>
+                {% endif %}
+
+                {% if profile.bio %}
+                    <p>{{ profile.bio }}</p>
+                {% endif %}
+
+                {% if profile.birth_date %}
+                    <p><strong>Birth Date:</strong> {{ profile.birth_date }}</p>
+                {% endif %}
+
+                {% if profile.location %}
+                    <p><strong>Location:</strong> {{ profile.location }}</p>
+                {% endif %}
+
+                <div class="mb-3 d-flex justify-content-between">
+                    <p >Followers: {{ number_of_followers }}</p>
+                    {% if user != request.user %}
+                        {% if isFollowing %}
+                            <form action="{% url 'remove_follower' profile.pk %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger">Unfollow</button>
+                            </form>
+                        {% else %}
+                            <form action="{% url 'add_follower' profile.pk %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success">Follow</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% for post in posts %}
+            <div class="row justify-content-center mt-5">
+                <div class="col-md-8 col-sm-12 border-bottom">
+                    <div class="position-relative">
+                        <a href="{%url 'profile' post.author.profile.pk%}"> <img class='round-circle post-img' height="30" width="30" src="{{post.author.profile.picture.url}}" />
+                        </a>
+                        <p><a style="text-decoration: none" href="{% url 'profile' post.author.profile.pk %}"><strong> @{{ post.author }}</strong></a> {{ post.created_on }}</p>
+                        <p>{{ post.body }}</p>
+                        <a href="{% url 'post_detail' post.pk %}" class="stretched-link"></a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}
